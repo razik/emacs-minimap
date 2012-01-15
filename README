@@ -25,7 +25,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Heavily based off minimap.el by David Engster however I
 have refactored it a bit to support only a single global
 minimap window. Usually this should be opened on startup
-when there is a single window. Some defaults have also 
+when there is a single window. Some defaults have also
 been changed.
 
 This file is an implementation of a minimap sidebar, i.e., a

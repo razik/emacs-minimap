@@ -25,7 +25,7 @@
 ;; Heavily based off minimap.el by David Engster however I
 ;; have refactored it a bit to support only a single global
 ;; minimap window. Usually this should be opened on startup
-;; when there is a single window. Some defaults have also 
+;; when there is a single window. Some defaults have also
 ;; been changed.
 
 ;; This file is an implementation of a minimap sidebar, i.e., a
@@ -268,7 +268,7 @@ minimap buffer."
             ;; kill existing buffer if there is one
             (when (string-match minimap-buffer-name-prefix
                                 (buffer-name (current-buffer)))
-              
+
               (when minimap-dedicated-window
                 (set-window-dedicated-p minimap-window nil))
               (kill-buffer)))
@@ -280,7 +280,7 @@ minimap buffer."
         ;; save new window to variable
         (setq minimap-window (selected-window))
         (setq was_created t))
-      
+
       ;;; BUFFER CREATION
       (select-window minimap-window)
       (when minimap-dedicated-window
@@ -332,7 +332,7 @@ minimap buffer."
       (when minimap-hide-fringes
         (set-window-fringes nil 0 0))
       ;; Calculate the actual number of lines displayable with the minimap face.
-      
+
       (setq minimap-numlines
             (floor
              (/
