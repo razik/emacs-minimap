@@ -249,59 +249,59 @@ minimap buffer."
 (defun minimap-create()
   "Create the minimap sidebar"
   (interactive)
-  (ad-activate 'delete-other-windows)
-  (let ((was_created)
-        (current_buffer (current-buffer))
-        (raw_buffer_name (buffer-name (current-buffer)))
-        (buffer_name (minimap-buffer-name))
-        (original_window (selected-window)))
-    ;; let progn
+  (when (display-graphic-p)
+    (ad-activate 'delete-other-windows)
+    (let ((was_created)
+	  (current_buffer (current-buffer))
+	  (raw_buffer_name (buffer-name (current-buffer)))
+	  (buffer_name (minimap-buffer-name))
+	  (original_window (selected-window)))
+      ;; let progn
+      ;;; WINDOW CREATION
+      ;; don't operate on minimap windows
+      (unless (string-match minimap-buffer-name-prefix raw_buffer_name)
+	;; if minimap window is open
+	(if (and minimap-window
+		 (window-live-p minimap-window))
+	    (progn
+	      ;; switch to it
+	      (select-window minimap-window)
+	      ;; kill existing buffer if there is one
+	      (when (string-match minimap-buffer-name-prefix
+				  (buffer-name (current-buffer)))
+		
+		(when minimap-dedicated-window
+		  (set-window-dedicated-p minimap-window nil))
+		(kill-buffer)))
+	  ;; otherwise split current window
+	  (unless (split-window-horizontally
+		   (round (* (window-width) minimap-width-fraction)))
+	    (message "Failed to create window. Try `delete-other-windows' (C-x 1) first.")
+	    (return nil))
+	  ;; save new window to variable
+	  (setq minimap-window (selected-window))
+	  (setq was_created t))
 
-    ;;; WINDOW CREATION
-    ;; don't operate on minimap windows
-    (unless (string-match minimap-buffer-name-prefix raw_buffer_name)
-      ;; if minimap window is open
-      (if (and minimap-window
-               (window-live-p minimap-window))
-          (progn
-            ;; switch to it
-            (select-window minimap-window)
-            ;; kill existing buffer if there is one
-            (when (string-match minimap-buffer-name-prefix
-                                (buffer-name (current-buffer)))
-
-              (when minimap-dedicated-window
-                (set-window-dedicated-p minimap-window nil))
-              (kill-buffer)))
-        ;; otherwise split current window
-        (unless (split-window-horizontally
-                 (round (* (window-width) minimap-width-fraction)))
-          (message "Failed to create window. Try `delete-other-windows' (C-x 1) first.")
-          (return nil))
-        ;; save new window to variable
-        (setq minimap-window (selected-window))
-        (setq was_created t))
-
-      ;;; BUFFER CREATION
-      (select-window minimap-window)
-      (when minimap-dedicated-window
-        (set-window-dedicated-p minimap-window nil))
-      ;; if minimap buffer exists
-      (if (get-buffer buffer_name)
-          ;; show it
-          (switch-to-buffer buffer_name t)
-        ;; otherwise create new minimap buffer
-        (minimap-new-minimap buffer_name current_buffer)
-        ;; initialize timer
-        (unless minimap-timer-object
-          (setq minimap-timer-object
-                (run-with-idle-timer minimap-update-delay t 'minimap-update))))
-      (if was_created
-          (other-window 1)
-        (select-window original_window))
-      (minimap-sync-overlays)
-      (when minimap-dedicated-window
-        (set-window-dedicated-p minimap-window 1)))))
+        ;;; BUFFER CREATION
+	(select-window minimap-window)
+	(when minimap-dedicated-window
+	  (set-window-dedicated-p minimap-window nil))
+	;; if minimap buffer exists
+	(if (get-buffer buffer_name)
+	    ;; show it
+	    (switch-to-buffer buffer_name t)
+	  ;; otherwise create new minimap buffer
+	  (minimap-new-minimap buffer_name current_buffer)
+	  ;; initialize timer
+	  (unless minimap-timer-object
+	    (setq minimap-timer-object
+		  (run-with-idle-timer minimap-update-delay t 'minimap-update))))
+	(if was_created
+	    (other-window 1)
+	  (select-window original_window))
+	(minimap-sync-overlays)
+	(when minimap-dedicated-window
+	  (set-window-dedicated-p minimap-window 1))))))
 
 (defun minimap-new-minimap (buffer_name target_buffer)
   "Create new minimap indirect-buffer pointing to target"
@@ -345,20 +345,21 @@ minimap buffer."
   "Kill minimap for current buffer.
 Cancel the idle timer if no more minimaps are active."
   (interactive)
-  (ad-deactivate 'delete-other-windows)
-  (if (null minimap-window)
-      (message "No minimap window found.")
-    ;; kill all minimap buffers
-    (set-window-dedicated-p minimap-window nil)
-    (dolist (ele (buffer-list))
-      (when (string-match minimap-buffer-name-prefix (buffer-name ele))
-        (kill-buffer ele)))
-    (delete-window minimap-window)
-    (setq minimap-window nil)
-    (when minimap-timer-object
-      (cancel-timer minimap-timer-object)
-      (setq minimap-timer-object nil))
-    (message "Minimap killed.")))
+  (when (display-graphic-p)
+    (ad-deactivate 'delete-other-windows)
+    (if (null minimap-window)
+	(message "No minimap window found.")
+      ;; kill all minimap buffers
+      (set-window-dedicated-p minimap-window nil)
+      (dolist (ele (buffer-list))
+	(when (string-match minimap-buffer-name-prefix (buffer-name ele))
+	  (kill-buffer ele)))
+      (delete-window minimap-window)
+      (setq minimap-window nil)
+      (when minimap-timer-object
+	(cancel-timer minimap-timer-object)
+	(setq minimap-timer-object nil))
+      (message "Minimap killed."))))
 
 
 (defun minimap-valid-target()
