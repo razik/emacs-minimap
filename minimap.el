@@ -316,7 +316,7 @@ minimap buffer."
         (setq vertical-scroll-bar nil))
       ;; show buffer
       (switch-to-buffer indirect_buffer)
-      (setq minimap-base-overlay (make-overlay (point-min) (point-max) nil t t))
+      (setq minimap-base-overlay (make-overlay (point-min) (point-max) nil nil t))
       (overlay-put minimap-base-overlay 'face 'minimap-font-face)
       (setq minimap-pointmin-overlay (make-overlay (point-min) (1+ (point-min))))
       (setq minimap-start (window-start)
