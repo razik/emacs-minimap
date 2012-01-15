@@ -249,6 +249,7 @@ minimap buffer."
 (defun minimap-create()
   "Create the minimap sidebar"
   (interactive)
+  (ad-activate 'delete-other-windows)
   (let ((was_created)
         (current_buffer (current-buffer))
         (raw_buffer_name (buffer-name (current-buffer)))
@@ -344,6 +345,7 @@ minimap buffer."
   "Kill minimap for current buffer.
 Cancel the idle timer if no more minimaps are active."
   (interactive)
+  (ad-deactivate 'delete-other-windows)
   (if (null minimap-window)
       (message "No minimap window found.")
     ;; kill all minimap buffers
@@ -640,6 +642,17 @@ This has to be called from the base buffer."
             (overlay-put ovnew 'display (concat "  " name "  "))
             (overlay-put ovnew 'priority 6))))
       (setq tags (cdr tags)))))
+
+;; liuw: provide advice for window operations
+;; the ultimate goal is to always display minimap window
+(defadvice delete-other-windows (around minimap-dow-advice)
+  "Avoid delete-other-windows deletes minimap window."
+  (let* ((window (or (ad-get-arg 0) (selected-window)))
+	 (win-list (window-list))
+	 (new-list (delete window (delete minimap-window win-list))))
+    (when (> (length new-list) 0)
+      (dolist (w new-list)
+	(delete-window w)))))
 
 ;; outline-(minor-)mode
 (add-hook 'outline-view-change-hook 'minimap-sync-overlays)
