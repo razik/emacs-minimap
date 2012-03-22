@@ -2,6 +2,7 @@
 
 ;; Copyright (C) 2012 Wei Liu
 ;; Copyright (C) 2011 Dustin Lacewell
+;; Copyright (C) 2009, 2010  David Engster
 
 ;; Authors: Wei Liu <liuw@liuw.name>
 ;;          Dustin Lacewell <dlacewell@gmail.com>
