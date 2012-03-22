@@ -3,7 +3,7 @@
 ;; Copyright (C) 2012 Wei Liu
 ;; Copyright (C) 2011 Dustin Lacewell
 
-;; Authors: Wei Liu <liuw@liuw.name> 
+;; Authors: Wei Liu <liuw@liuw.name>
 ;;          Dustin Lacewell <dlacewell@gmail.com>
 ;;          David Engster <dengste@eml.cc>
 ;; Keywords: minimap
@@ -31,7 +31,7 @@
 ;; when there is a single window. Some defaults have also
 ;; been changed.
 
-;; Wei Liu: 
+;; Wei Liu:
 ;; This work is based on Dustin Lacewell and David Engster's work of
 ;; minimap. In this version, a global minimap sidebar is created and
 ;; persistent through Emacs. Other modifications include bug fix and only
@@ -113,12 +113,19 @@ By default, this is only a different background color."
   :type 'number
   :group 'minimap)
 
+(defcustom minimap-window-location 'left
+  "Location of the minimap window.
+Can be either the symbol `left' or `right'."
+  :type '(choice (const :tag "Left" left)
+		 (const :tag "Right" right))
+  :group 'minimap)
+
 (defcustom minimap-buffer-name-prefix "*MINIMAP*"
   "Prefix for buffer names of minimap sidebar."
   :type 'string
   :group 'minimap)
 
-(defcustom minimap-update-delay 0.8
+(defcustom minimap-update-delay 0.1
   "Delay in seconds after which sidebar gets updated.
 Setting this to 0 will let the minimap react immediately, but
 this will slow down scrolling."
@@ -138,7 +145,7 @@ this will slow down scrolling."
   :type 'boolean
   :group 'minimap)
 
-(defcustom minimap-recenter-type 'middle
+(defcustom minimap-recenter-type 'relative
   "Specifies the type of recentering the minimap should use.
 The minimap can use different types of recentering, i.e., how the
 minimap should behave when you scroll in the main window or when
@@ -278,15 +285,19 @@ minimap buffer."
 	      ;; kill existing buffer if there is one
 	      (when (string-match minimap-buffer-name-prefix
 				  (buffer-name (current-buffer)))
-		
+
 		(when minimap-dedicated-window
 		  (set-window-dedicated-p minimap-window nil))
 		(kill-buffer)))
-	  ;; otherwise split current window
-	  (unless (split-window-horizontally
-		   (round (* (window-width) minimap-width-fraction)))
-	    (message "Failed to create window. Try `delete-other-windows' (C-x 1) first.")
-	    (return nil))
+	  ;; Otherwise split current window
+          (if (eq minimap-window-location 'left)
+              (unless (split-window-horizontally (round (* (window-width) minimap-width-fraction)))
+                (message "Failed to create window. Try `delete-other-windows' (C-x 1) first.")
+                (return nil))
+            (unless (split-window-horizontally (round (* (window-width) (- 1 minimap-width-fraction))))
+              (message  "Failed to create window. Try `delete-other-windows' (C-x 1) first.")
+              (return nil))
+            (other-window 1))
 	  ;; save new window to variable
 	  (setq minimap-window (selected-window))
 	  (setq was_created t))
