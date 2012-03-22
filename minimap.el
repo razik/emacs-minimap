@@ -56,7 +56,7 @@
 ;;; Customizable variables;
 
 (defgroup minimap nil
-  "A minimaap sidebar for Emacs."
+  "A minimap sidebar for Emacs."
   :group 'convenience)
 
 (defface minimap-font-face
@@ -78,30 +78,30 @@ By default, this is only a different background color."
   '((((background dark))
      (:box (:line-width 1 :color "white")
            :inherit (font-lock-function-name-face minimap-font-face)
-           :height 1.9 :background "gray10"))
+           :height 2.5 :background "gray10"))
     (t (:box (:line-width 1 :color "black")
              :inherit (font-lock-function-name-face minimap-font-face)
-             :height 1.9 :background "gray90")))
+             :height 2.5 :background "gray90")))
   "Face used for functions in the semantic overlay.")
 
 (defface minimap-semantic-variable-face
   '((((background dark))
      (:box (:line-width 1 :color "white")
            :inherit (font-lock-variable-name-face minimap-font-face)
-           :height 1.9 :background "gray10"))
+           :height 2.5 :background "gray10"))
     (t (:box (:line-width 1 :color "black")
              :inherit (font-lock-function-name-face minimap-font-face)
-             :height 1.9 :background "gray90")))
+             :height 2.5 :background "gray90")))
   "Face used for variables in the semantic overlay.")
 
 (defface minimap-semantic-type-face
   '((((background dark))
      (:box (:line-width 1 :color "white")
            :inherit (font-lock-type-face minimap-font-face)
-           :height 1.9 :background "gray10"))
+           :height 2.5 :background "gray10"))
     (t (:box (:line-width 1 :color "black")
              :inherit (font-lock-function-name-face minimap-font-face)
-             :height 1.9 :background "gray90")))
+             :height 2.5 :background "gray90")))
   "Face used for types in the semantic overlay.")
 
 (defcustom minimap-dedicated-window t
@@ -109,7 +109,7 @@ By default, this is only a different background color."
   :type 'boolean
   :group 'minimap)
 
-(defcustom minimap-width-fraction 0.1
+(defcustom minimap-width-fraction 0.2
   "Fraction of width which should be used for minimap sidebar."
   :type 'number
   :group 'minimap)
@@ -121,12 +121,12 @@ Can be either the symbol `left' or `right'."
 		 (const :tag "Right" right))
   :group 'minimap)
 
-(defcustom minimap-buffer-name-prefix "*MINIMAP*"
+(defcustom minimap-buffer-name-prefix "*MINIMAP* "
   "Prefix for buffer names of minimap sidebar."
   :type 'string
   :group 'minimap)
 
-(defcustom minimap-update-delay 0.1
+(defcustom minimap-update-delay 0.2
   "Delay in seconds after which sidebar gets updated.
 Setting this to 0 will let the minimap react immediately, but
 this will slow down scrolling."
@@ -154,16 +154,16 @@ you drag the active region with the mouse.  The following
 explanations will probably not help much, so simply try them and
 choose the one which suits you best.
 
+`relative' -- The position of the active region in the minimap
+corresponds with the relative position of this region in the
+buffer. This the default.
+
 `middle' -- The active region will stay fixed in the middle of
-the minimap. This the default.
+the minimap.
 
 `free' -- The position will be more or less free.  When dragging
 the active region, the minimap will scroll when you reach the
-bottom or top.
-
-`relative' -- The position of the active region in the minimap
-corresponds with the relative position of this region in the
-buffer."
+bottom or top."
 
   :type '(choice (const :tag "Relative" relative)
                  (const :tag "Middle" middle)
