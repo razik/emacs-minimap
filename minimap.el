@@ -121,7 +121,7 @@ Can be either the symbol `left' or `right'."
 		 (const :tag "Right" right))
   :group 'minimap)
 
-(defcustom minimap-buffer-name-prefix "*MINIMAP* "
+(defcustom minimap-buffer-name-prefix "*MINIMAP*"
   "Prefix for buffer names of minimap sidebar."
   :type 'string
   :group 'minimap)
