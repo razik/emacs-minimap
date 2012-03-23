@@ -109,6 +109,11 @@ By default, this is only a different background color."
   :type 'boolean
   :group 'minimap)
 
+(defcustom minimap-stay-at-beginning-of-line nil
+  "Whether the cursor should go to the beginning of line"
+  :type 'boolean
+  :group 'minimap)
+
 (defcustom minimap-width-fraction 0.2
   "Fraction of width which should be used for minimap sidebar."
   :type 'number
@@ -420,7 +425,9 @@ Cancel the idle timer if no more minimaps are active."
         (when minimap-always-recenter
           (recenter (round (/ (window-height) 2))))
         (when minimap-dedicated-window
-          (set-window-dedicated-p minimap-window 1))))))
+          (set-window-dedicated-p minimap-window 1))
+        (when minimap-stay-at-beginning-of-line
+          (beginning-of-line))))))
 
 ;;; Overlay movement
 (defun minimap-move-overlay-mouse (start-event)
